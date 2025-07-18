@@ -11,8 +11,8 @@ Image {
     readonly property string cachePath: `${Paths.imagecache}/${hash}@${width}x${height}.png`.slice(7)
 
     asynchronous: true
-    cache: false
-    fillMode: Image.PreserveAspectCrop
+    cache: true
+    fillMode: Image.PreserveAspectFill
     sourceSize.width: width
     sourceSize.height: height
 

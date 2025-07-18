@@ -10,14 +10,13 @@ JsonObject {
 
     property JsonObject workspaces: JsonObject {
         property int shown: 5
-        property bool rounded: true
+        property bool rounded: false
         property bool activeIndicator: true
         property bool occupiedBg: false
         property bool showWindows: true
-        property bool activeTrail: false 
+        property bool activeTrail: true
         property string label: " 󱓻 "
         property string occupiedLabel: " 󱨇 "
         property string activeLabel:  " 󱨇 "
     }
 }
-
