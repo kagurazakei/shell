@@ -1,5 +1,5 @@
-import "root:/widgets"
-import "root:/services"
+import qs.widgets
+import qs.services
 import Quickshell
 import Quickshell.Io
 
@@ -13,7 +13,7 @@ Scope {
         description: "Toggle launcher, dashboard and osd"
         onPressed: {
             const v = Visibilities.getForActive();
-            v.launcher = v.dashboard = v.osd = !(v.launcher || v.dashboard || v.osd);
+            v.launcher = v.dashboard = v.osd = v.utilities = !(v.launcher || v.dashboard || v.osd || v.utilities);
         }
     }
 

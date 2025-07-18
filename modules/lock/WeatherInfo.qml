@@ -1,6 +1,6 @@
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
+import qs.widgets
+import qs.services
+import qs.config
 import QtQuick
 import QtQuick.Layouts
 
@@ -27,9 +27,6 @@ RowLayout {
         text: Weather.icon || "cloud_alert"
         color: Colours.palette.m3secondary
         font.pointSize: Appearance.font.size.extraLarge * 2.5
-        font.variableAxes: ({
-                opsz: Appearance.font.size.extraLarge * 1.2
-            })
     }
 
     ColumnLayout {
@@ -43,7 +40,7 @@ RowLayout {
             Layout.fillWidth: true
 
             animate: true
-            text: `${Weather.temperature}°C`
+            text: Config.services.useFahrenheit ? Weather.tempF : Weather.tempC
             color: Colours.palette.m3primary
             horizontalAlignment: Text.AlignHCenter
             font.pointSize: Appearance.font.size.extraLarge

@@ -1,7 +1,7 @@
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
-import "root:/utils"
+import qs.widgets
+import qs.services
+import qs.config
+import qs.utils
 import QtQuick
 
 Item {
@@ -11,10 +11,7 @@ Item {
 
     implicitWidth: icon.implicitWidth + info.implicitWidth + info.anchors.leftMargin
 
-    onVisibleChanged: {
-        if (visible)
-            Weather.reload();
-    }
+    Component.onCompleted: Weather.reload()
 
     MaterialIcon {
         id: icon
@@ -26,9 +23,6 @@ Item {
         text: Weather.icon || "cloud_alert"
         color: Colours.palette.m3secondary
         font.pointSize: Appearance.font.size.extraLarge * 2
-        font.variableAxes: ({
-                opsz: Appearance.font.size.extraLarge * 1.2
-            })
     }
 
     Column {
@@ -44,7 +38,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
 
             animate: true
-            text: `${Weather.temperature}°C`
+            text: Config.services.useFahrenheit ? Weather.tempF : Weather.tempC
             color: Colours.palette.m3primary
             font.pointSize: Appearance.font.size.extraLarge
             font.weight: 500

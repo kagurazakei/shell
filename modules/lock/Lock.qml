@@ -1,6 +1,6 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
+import qs.widgets
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -44,6 +44,14 @@ Scope {
 
         function lock(): void {
             loader.activeAsync = true;
+        }
+
+        function unlock(): void {
+            loader.item.locked = false;
+        }
+
+        function isLocked(): bool {
+            return loader.active;
         }
     }
 }

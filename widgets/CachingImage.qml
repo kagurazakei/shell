@@ -1,5 +1,5 @@
-import "root:/services"
-import "root:/utils"
+import qs.services
+import qs.utils
 import Quickshell.Io
 import QtQuick
 
@@ -8,19 +8,15 @@ Image {
 
     property string path
     property string hash
-    readonly property string cachePath: `${Paths.imagecache}/${hash}@${width}x${height}.png`.slice(7)
+    readonly property string cachePath: `${Paths.stringify(Paths.imagecache)}/${hash}@${width}x${height}.png`.slice(7)
 
     asynchronous: true
-    cache: true
-    fillMode: Image.PreserveAspectFill
+    cache: false
+    fillMode: Image.PreserveAspectCrop
     sourceSize.width: width
     sourceSize.height: height
 
-    onPathChanged: {
-        shaProc.signal(9);
-        shaProc.path = path.replace("file://", "");
-        shaProc.running = true;
-    }
+    onPathChanged: shaProc.exec(["sha256sum", Paths.strip(path)])
 
     onCachePathChanged: {
         if (hash)
@@ -40,9 +36,6 @@ Image {
     Process {
         id: shaProc
 
-        property string path
-
-        command: ["sha256sum", path]
         stdout: StdioCollector {
             onStreamFinished: root.hash = text.split(" ")[0]
         }

@@ -1,8 +1,8 @@
 pragma Singleton
 
 import "root:/utils/scripts/fuzzysort.js" as Fuzzy
-import "root:/services"
-import "root:/config"
+import qs.services
+import qs.config
 import Quickshell
 import Quickshell.Io
 import QtQuick
@@ -119,7 +119,7 @@ Singleton {
 
             function onClicked(list: AppList): void {
                 list.visibilities.launcher = false;
-                Quickshell.execDetached(["caelestia", "shell", "lock", "lock"]);
+                Quickshell.execDetached(["loginctl", "lock-session"]);
             }
         },
         Action {

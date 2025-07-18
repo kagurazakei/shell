@@ -1,11 +1,29 @@
-import QtQuick
+pragma ComponentBehavior: Bound
+
+import qs.services
+import qs.config
+import qs.utils
 import Quickshell
-import "root:/config"
+import QtQuick
+import QtQuick.Dialogs
 
 Item {
     id: root
 
     required property PersistentProperties visibilities
+    readonly property PersistentProperties state: PersistentProperties {
+        property int currentTab
+
+        readonly property FileDialog facePicker: FileDialog {
+            title: qsTr("Select a profile picture")
+            acceptLabel: qsTr("Select")
+            nameFilters: [`Image files (${Wallpapers.extensions.map(e => `*.${e}`).join(" ")})`]
+            onAccepted: {
+                Paths.copy(selectedFile, `${Paths.home}/.face`);
+                Quickshell.execDetached(["notify-send", "-a", "caelestia-shell", "-u", "low", "-h", `STRING:image-path:${Paths.strip(selectedFile)}`, "Profile picture changed", `Profile picture changed to ${Paths.shortenHome(Paths.strip(selectedFile))}`]);
+            }
+        }
+    }
 
     visible: height > 0
     implicitHeight: 0
@@ -47,9 +65,17 @@ Item {
         }
     ]
 
-    Content {
+    Loader {
         id: content
 
-        visibilities: root.visibilities
+        Component.onCompleted: active = Qt.binding(() => root.visibilities.dashboard || root.visible)
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+
+        sourceComponent: Content {
+            visibilities: root.visibilities
+            state: root.state
+        }
     }
 }

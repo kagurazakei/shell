@@ -1,8 +1,7 @@
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
+import qs.widgets
+import qs.services
+import qs.config
 import QtQuick
-import QtQuick.Controls
 
 Row {
     id: root
@@ -12,6 +11,10 @@ Row {
 
     padding: Appearance.padding.large
     spacing: Appearance.spacing.normal
+
+    Ref {
+        service: SystemUsage
+    }
 
     Resource {
         icon: "memory"

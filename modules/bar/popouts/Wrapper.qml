@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
-import "root:/services"
-import "root:/config"
-import "root:/modules/windowinfo"
+import qs.services
+import qs.config
+import qs.modules.windowinfo
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
@@ -86,6 +86,7 @@ Item {
 
         sourceComponent: WindowInfo {
             screen: root.screen
+            client: Hyprland.activeToplevel
         }
     }
 

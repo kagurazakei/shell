@@ -1,6 +1,6 @@
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
+import qs.widgets
+import qs.services
+import qs.config
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
@@ -100,6 +100,7 @@ RowLayout {
             MaterialIcon {
                 anchors.centerIn: parent
 
+                grade: 200
                 text: "art_track"
                 color: Colours.palette.m3onSurfaceVariant
                 font.pointSize: (root.isLarge ? Config.lock.sizes.mediaCoverSize : Config.lock.sizes.mediaCoverSizeSmall) * 0.4

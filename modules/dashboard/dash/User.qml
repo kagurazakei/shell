@@ -1,7 +1,7 @@
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
-import "root:/utils"
+import qs.widgets
+import qs.services
+import qs.config
+import qs.utils
 import Quickshell
 import Quickshell.Io
 import QtQuick
@@ -11,6 +11,7 @@ Row {
     id: root
 
     required property PersistentProperties visibilities
+    required property PersistentProperties state
 
     padding: Appearance.padding.large
     spacing: Appearance.spacing.normal
@@ -27,14 +28,15 @@ Row {
 
             text: "person"
             fill: 1
-            font.pointSize: (info.implicitHeight / 2) || 1
+            grade: 200
+            font.pointSize: Math.floor(info.implicitHeight / 2) || 1
         }
 
         CachingImage {
             id: pfp
 
             anchors.fill: parent
-            path: `${Paths.home}/.face`
+            path: `${Paths.stringify(Paths.home)}/.face`
         }
 
         MouseArea {
@@ -45,7 +47,7 @@ Row {
 
             onClicked: {
                 root.visibilities.launcher = false;
-                dialog.open();
+                root.state.facePicker.open();
             }
 
             StyledRect {
@@ -102,18 +104,6 @@ Row {
                 }
             }
         }
-
-        FileDialog {
-            id: dialog
-
-            nameFilters: [`Image files (${Wallpapers.extensions.map(e => `*.${e}`).join(" ")})`]
-
-            onAccepted: {
-                Paths.copy(selectedFile, `${Paths.home}/.face`);
-                pfp.pathChanged();
-                Quickshell.execDetached(["notify-send", "-a", "caelestia-shell", "-u", "low", "Profile picture changed", `Profile picture changed to ${Paths.strip(selectedFile)}`]);
-            }
-        }
     }
 
     Column {
@@ -126,6 +116,7 @@ Row {
             icon: Icons.osIcon
             text: Icons.osName
             colour: Colours.palette.m3primary
+            materialIcon: false
         }
 
         InfoLine {
@@ -135,26 +126,38 @@ Row {
         }
 
         InfoLine {
+            id: uptime
+
             icon: "timer"
-            text: uptimeProc.uptime
+            text: qsTr("Loading uptime...")
             colour: Colours.palette.m3tertiary
 
             Timer {
                 running: true
                 repeat: true
                 interval: 15000
-                onTriggered: uptimeProc.running = true
+                onTriggered: fileUptime.reload()
             }
 
-            Process {
-                id: uptimeProc
+            FileView {
+                id: fileUptime
 
-                property string uptime
+                path: "/proc/uptime"
+                onLoaded: {
+                    const up = parseInt(text().split(" ")[0] ?? 0);
 
-                running: true
-                command: ["uptime", "-p"]
-                stdout: StdioCollector {
-                    onStreamFinished: uptimeProc.uptime = text.trim()
+                    const days = Math.floor(up / 86400);
+                    const hours = Math.floor((up % 86400) / 3600);
+                    const minutes = Math.floor((up % 3600) / 60);
+
+                    let str = qsTr("up ");
+                    if (days > 0)
+                        str += `${days} day${days === 1 ? "" : "s"}`;
+                    if (hours > 0)
+                        str += `${str ? ", " : ""}${hours} hour${hours === 1 ? "" : "s"}`;
+                    if (minutes > 0 || !str)
+                        str += `${str ? ", " : ""}${minutes} minute${minutes === 1 ? "" : "s"}`;
+                    uptime.text = str;
                 }
             }
         }
@@ -166,6 +169,7 @@ Row {
         required property string icon
         required property string text
         required property color colour
+        property bool materialIcon: true
 
         implicitWidth: icon.implicitWidth + text.width + text.anchors.leftMargin
         implicitHeight: Math.max(icon.implicitHeight, text.implicitHeight)
@@ -176,12 +180,11 @@ Row {
             anchors.left: parent.left
             anchors.leftMargin: (Config.dashboard.sizes.infoIconSize - implicitWidth) / 2
 
+            fill: 1
             text: line.icon
             color: line.colour
             font.pointSize: Appearance.font.size.normal
-            font.variableAxes: ({
-                    FILL: 1
-                })
+            font.family: line.materialIcon ? Appearance.font.family.material : Appearance.font.family.sans
         }
 
         StyledText {

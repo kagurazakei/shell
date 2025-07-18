@@ -1,8 +1,9 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
+import qs.widgets
+import qs.services
+import qs.config
+import qs.utils
 import QtQuick
 import QtQuick.Dialogs
 
@@ -40,9 +41,6 @@ Item {
                     text: "sentiment_stressed"
                     color: Colours.palette.m3onSurfaceVariant
                     font.pointSize: Appearance.font.size.extraLarge * 5
-                    font.variableAxes: ({
-                            opsz: Appearance.font.size.extraLarge * 5
-                        })
                 }
 
                 Column {
@@ -66,9 +64,10 @@ Item {
                         FileDialog {
                             id: dialog
 
+                            title: qsTr("Select a wallpaper")
+                            acceptLabel: qsTr("Select")
                             nameFilters: [`Image files (${Wallpapers.extensions.map(e => `*.${e}`).join(" ")})`]
-
-                            onAccepted: Wallpapers.setWallpaper(selectedFile.toString().replace("file://", ""))
+                            onAccepted: Wallpapers.setWallpaper(Paths.strip(selectedFile))
                         }
 
                         StateLayer {

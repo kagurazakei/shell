@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
+import qs.widgets
+import qs.services
+import qs.config
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -36,16 +36,27 @@ MouseArea {
     property real sw: Math.abs(sx - ex)
     property real sh: Math.abs(sy - ey)
 
-    property list<var> clients: Hyprland.clients.filter(c => c.workspace.id === Hyprland.activeWsId)
+    property list<var> clients: Hyprland.toplevels.values.filter(c => c.workspace?.id === Hyprland.activeWsId).sort((a, b) => {
+        // Pinned first, then floating, then any other
+        if (a.lastIpcObject.pinned === b.lastIpcObject.pinned)
+            return a.lastIpcObject.floating === b.lastIpcObject.floating ? 0 : a.lastIpcObject.floating ? -1 : 1;
+        if (a.lastIpcObject.pinned)
+            return -1;
+        return 1;
+    })
 
     function checkClientRects(x: real, y: real): void {
-        for (const c of clients) {
-            if (c.x <= x && c.y <= y && c.x + c.width >= x && c.y + c.height >= y) {
+        for (const client of clients) {
+            const {
+                at: [cx, cy],
+                size: [cw, ch]
+            } = client.lastIpcObject;
+            if (cx <= x && cy <= y && cx + cw >= x && cy + ch >= y) {
                 onClient = true;
-                sx = c.x;
-                sy = c.y;
-                ex = c.x + c.width;
-                ey = c.y + c.height;
+                sx = cx;
+                sy = cy;
+                ex = cx + cw;
+                ey = cy + ch;
                 break;
             }
         }
@@ -173,11 +184,18 @@ MouseArea {
     }
 
     StyledRect {
-        id: background
-
         anchors.fill: parent
         color: Colours.palette.m3secondaryContainer
-        visible: false
+        opacity: 0.3
+
+        layer.enabled: true
+        layer.effect: MultiEffect {
+            maskSource: selectionWrapper
+            maskEnabled: true
+            maskInverted: true
+            maskSpreadAtMin: 1
+            maskThresholdMin: 0.5
+        }
     }
 
     Item {
@@ -196,17 +214,6 @@ MouseArea {
             implicitWidth: root.sw
             implicitHeight: root.sh
         }
-    }
-
-    MultiEffect {
-        anchors.fill: parent
-        source: background
-        maskSource: selectionWrapper
-        maskEnabled: true
-        maskInverted: true
-        maskSpreadAtMin: 1
-        maskThresholdMin: 0.5
-        opacity: 0.3
     }
 
     Rectangle {

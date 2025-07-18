@@ -1,6 +1,9 @@
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
+pragma ComponentBehavior: Bound
+
+import qs.widgets
+import qs.services
+import qs.config
+import Quickshell
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
@@ -98,6 +101,7 @@ WrapperItem {
             text: parent.icon
             color: Colours.palette.m3onSecondaryContainer
             font.pointSize: (parent.width * 0.4) || 1
+            font.weight: handler.hovered ? 500 : 400
         }
 
         Behavior on radius {

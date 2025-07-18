@@ -1,9 +1,8 @@
 pragma Singleton
 
-import "root:/config"
-import "root:/utils"
+import qs.config
+import qs.utils
 import Quickshell
-import Quickshell.Io
 import QtQuick
 
 Singleton {
@@ -12,38 +11,30 @@ Singleton {
     property string loc
     property string icon
     property string description
-    property real temperature
+    property string tempC: "0°C"
+    property string tempF: "0°F"
 
     function reload(): void {
-        if (Config.dashboard.weatherLocation)
-            loc = Config.dashboard.weatherLocation;
-        else
-            ipProc.running = true;
+        if (Config.services.weatherLocation)
+            loc = Config.services.weatherLocation;
+        else if (!loc || timer.elapsed() > 900)
+            Requests.get("https://ipinfo.io/json", text => {
+                loc = JSON.parse(text).loc ?? "";
+                timer.restart();
+            });
     }
 
-    onLocChanged: wttrProc.running = true
+    onLocChanged: Requests.get(`https://wttr.in/${loc}?format=j1`, text => {
+        const json = JSON.parse(text).current_condition[0];
+        icon = Icons.getWeatherIcon(json.weatherCode);
+        description = json.weatherDesc[0].value;
+        tempC = `${parseFloat(json.temp_C)}°C`;
+        tempF = `${parseFloat(json.temp_F)}°F`;
+    })
+
     Component.onCompleted: reload()
 
-    Process {
-        id: ipProc
-
-        command: ["curl", "ipinfo.io"]
-        stdout: StdioCollector {
-            onStreamFinished: root.loc = JSON.parse(text).loc ?? ""
-        }
-    }
-
-    Process {
-        id: wttrProc
-
-        command: ["curl", `https://wttr.in/${root.loc}?format=j1`]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const json = JSON.parse(text).current_condition[0];
-                root.icon = Icons.getWeatherIcon(json.weatherCode);
-                root.description = json.weatherDesc[0].value;
-                root.temperature = parseFloat(json.temp_C);
-            }
-        }
+    ElapsedTimer {
+        id: timer
     }
 }

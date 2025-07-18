@@ -1,6 +1,8 @@
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
+pragma ComponentBehavior: Bound
+
+import qs.widgets
+import qs.services
+import qs.config
 import QtQuick
 import QtQuick.Shapes
 import QtQuick.Effects
@@ -12,6 +14,8 @@ Item {
     required property real weatherWidth
     required property real buttonsWidth
     required property real buttonsHeight
+    required property real statusWidth
+    required property real statusHeight
     required property bool isNormal
     required property bool isLarge
 
@@ -21,6 +25,8 @@ Item {
     readonly property real weatherRight: innerMask.anchors.margins + weatherPath.width
     readonly property real buttonsTop: innerMask.anchors.margins + buttonsPath.height
     readonly property real buttonsLeft: innerMask.anchors.margins + buttonsPath.width
+    readonly property real statusBottom: innerMask.anchors.margins + statusPath.height
+    readonly property real statusLeft: innerMask.anchors.margins + statusPath.width
 
     readonly property real mediaX: innerMask.anchors.margins + mediaPath.width
     readonly property real mediaY: innerMask.anchors.margins + mediaPath.height
@@ -31,8 +37,16 @@ Item {
         id: base
 
         anchors.fill: parent
-        color: Colours.alpha(Config.border.colour, false)
-        visible: false
+        color: Colours.alpha(Colours.palette.m3surface, false)
+
+        layer.enabled: true
+        layer.effect: MultiEffect {
+            maskEnabled: true
+            maskInverted: true
+            maskSource: mask
+            maskThresholdMin: 0.5
+            maskSpreadAtMin: 1
+        }
     }
 
     Item {
@@ -55,16 +69,6 @@ Item {
         }
     }
 
-    MultiEffect {
-        anchors.fill: parent
-        source: base
-        maskEnabled: true
-        maskInverted: true
-        maskSource: mask
-        maskThresholdMin: 0.5
-        maskSpreadAtMin: 1
-    }
-
     Shape {
         anchors.fill: parent
         anchors.margins: Math.floor(innerMask.anchors.margins)
@@ -82,7 +86,7 @@ Item {
             readonly property real roundingY: flatten ? height / 2 : rounding
 
             strokeWidth: -1
-            fillColor: Config.border.colour
+            fillColor: Colours.palette.m3surface
 
             startX: (innerMask.width - width) / 2 - rounding
 
@@ -149,7 +153,7 @@ Item {
             readonly property real roundingY: flatten ? height / 2 : rounding
 
             strokeWidth: -1
-            fillColor: Config.border.colour
+            fillColor: Colours.palette.m3surface
 
             startX: (innerMask.width - width) / 2 - rounding
             startY: Math.ceil(innerMask.height)
@@ -217,7 +221,7 @@ Item {
             readonly property real roundingY: height < rounding * 2 ? height / 2 : rounding
 
             strokeWidth: -1
-            fillColor: Config.border.colour
+            fillColor: Colours.palette.m3surface
 
             startY: Math.ceil(innerMask.height) - height - roundingY
 
@@ -282,7 +286,7 @@ Item {
             readonly property real roundingY: height < rounding * 2 ? height / 2 : rounding
 
             strokeWidth: -1
-            fillColor: root.isNormal ? Config.border.colour : "transparent"
+            fillColor: root.isNormal ? Colours.palette.m3surface : "transparent"
 
             startX: root.isLarge ? 0 : Math.ceil(innerMask.width)
             startY: root.isLarge ? height + roundingY : Math.ceil(innerMask.height) - height - roundingY
@@ -347,16 +351,16 @@ Item {
             readonly property real roundingY: height < rounding * 2 ? height / 2 : rounding
 
             strokeWidth: -1
-            fillColor: root.isLarge ? Config.border.colour : "transparent"
+            fillColor: root.isLarge ? Colours.palette.m3surface : "transparent"
 
             startX: Math.ceil(innerMask.width)
-            startY: Math.ceil(innerMask.height) - height - roundingY
+            startY: Math.ceil(innerMask.height) - height - rounding
 
             PathArc {
                 relativeX: -buttonsPath.roundingX
-                relativeY: buttonsPath.roundingY
+                relativeY: buttonsPath.rounding
                 radiusX: Math.min(buttonsPath.rounding, buttonsPath.width)
-                radiusY: Math.min(buttonsPath.rounding, buttonsPath.height)
+                radiusY: buttonsPath.rounding, buttonsPath.height
             }
             PathLine {
                 relativeX: -(buttonsPath.width - buttonsPath.roundingX * 2)
@@ -381,6 +385,72 @@ Item {
             }
             PathLine {
                 relativeX: buttonsPath.width + buttonsPath.roundingX
+                relativeY: 0
+            }
+
+            Behavior on width {
+                Anim {}
+            }
+
+            Behavior on height {
+                Anim {}
+            }
+
+            Behavior on fillColor {
+                ColorAnimation {
+                    duration: Appearance.anim.durations.normal
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: Appearance.anim.curves.standard
+                }
+            }
+        }
+
+        ShapePath {
+            id: statusPath
+
+            property int width: root.locked ? root.statusWidth - Config.lock.sizes.border / 4 : 0
+            property real height: root.locked ? root.statusHeight - Config.lock.sizes.border / 4 : 0
+
+            readonly property real rounding: Appearance.rounding.large * 2
+            readonly property real roundingX: width < rounding * 2 ? width / 2 : rounding
+            readonly property real roundingY: height < rounding * 2 ? height / 2 : rounding
+
+            strokeWidth: -1
+            fillColor: root.isLarge ? Colours.palette.m3surface : "transparent"
+
+            startX: Math.ceil(innerMask.width)
+            startY: height + rounding
+
+            PathArc {
+                relativeX: -statusPath.roundingX
+                relativeY: -statusPath.rounding
+                radiusX: Math.min(statusPath.rounding, statusPath.width)
+                radiusY: statusPath.rounding
+                direction: PathArc.Counterclockwise
+            }
+            PathLine {
+                relativeX: -(statusPath.width - statusPath.roundingX * 2)
+                relativeY: 0
+            }
+            PathArc {
+                relativeX: -statusPath.roundingX
+                relativeY: -statusPath.roundingY
+                radiusX: Math.min(statusPath.rounding, statusPath.width)
+                radiusY: Math.min(statusPath.rounding, statusPath.height)
+            }
+            PathLine {
+                relativeX: 0
+                relativeY: -(statusPath.height - statusPath.roundingY * 2)
+            }
+            PathArc {
+                relativeX: -statusPath.roundingX
+                relativeY: -statusPath.roundingY
+                radiusX: Math.min(statusPath.rounding, statusPath.width)
+                radiusY: Math.min(statusPath.rounding, statusPath.height)
+                direction: PathArc.Counterclockwise
+            }
+            PathLine {
+                relativeX: statusPath.width + statusPath.roundingX
                 relativeY: 0
             }
 

@@ -1,13 +1,13 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
+import qs.widgets
+import qs.services
+import qs.config
 import Quickshell
 import QtQuick
 import QtQuick.Controls
 
-ListView {
+StyledListView {
     id: root
 
     required property TextField search

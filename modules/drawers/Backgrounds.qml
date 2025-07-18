@@ -1,11 +1,12 @@
-import "root:/services"
-import "root:/config"
-import "root:/modules/osd" as Osd
-import "root:/modules/notifications" as Notifications
-import "root:/modules/session" as Session
-import "root:/modules/launcher" as Launcher
-import "root:/modules/dashboard" as Dashboard
-import "root:/modules/bar/popouts" as BarPopouts
+import qs.services
+import qs.config
+import qs.modules.osd as Osd
+import qs.modules.notifications as Notifications
+import qs.modules.session as Session
+import qs.modules.launcher as Launcher
+import qs.modules.dashboard as Dashboard
+import qs.modules.bar.popouts as BarPopouts
+import qs.modules.utilities as Utilities
 import QtQuick
 import QtQuick.Shapes
 
@@ -62,5 +63,12 @@ Shape {
 
         startX: wrapper.x
         startY: wrapper.y - rounding * sideRounding
+    }
+
+    Utilities.Background {
+        wrapper: panels.utilities
+
+        startX: root.width
+        startY: root.height
     }
 }

@@ -1,5 +1,5 @@
-import "root:/services"
-import "root:/config"
+import qs.services
+import qs.config
 import Quickshell
 import QtQuick
 import QtQuick.Shapes
@@ -14,7 +14,7 @@ ShapePath {
     property real fullHeightRounding: wrapper.height >= QsWindow.window?.height - Config.border.thickness * 2 ? -rounding : rounding
 
     strokeWidth: -1
-    fillColor: Config.border.colour
+    fillColor: Colours.palette.m3surface
 
     PathLine {
         relativeX: -(root.wrapper.width + root.rounding)

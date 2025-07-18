@@ -1,5 +1,5 @@
-import "root:/services"
-import "root:/config"
+import qs.services
+import qs.config
 import QtQuick
 import QtQuick.Controls
 
@@ -21,10 +21,11 @@ ScrollBar {
         }
     }
 
-    MouseArea {
+    CustomMouseArea {
         z: -1
         anchors.fill: parent
-        onWheel: event => {
+
+        function onWheel(event: WheelEvent): void {
             if (event.angleDelta.y > 0)
                 root.decrease();
             else if (event.angleDelta.y < 0)

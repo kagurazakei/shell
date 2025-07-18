@@ -1,9 +1,9 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
-import "root:/modules/bar"
+import qs.widgets
+import qs.services
+import qs.config
+import qs.modules.bar
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
@@ -86,10 +86,13 @@ Variants {
             }
 
             Item {
-                id: background
-
                 anchors.fill: parent
-                visible: false
+                layer.enabled: true
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    blurMax: 15
+                    shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.7)
+                }
 
                 Border {
                     bar: bar
@@ -101,21 +104,15 @@ Variants {
                 }
             }
 
-            MultiEffect {
-                anchors.fill: source
-                source: background
-                shadowEnabled: true
-                blurMax: 15
-                shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.7)
-            }
-
             PersistentProperties {
                 id: visibilities
 
+                property bool bar
                 property bool osd
                 property bool session
                 property bool launcher
                 property bool dashboard
+                property bool utilities
 
                 Component.onCompleted: Visibilities.screens[scope.modelData] = this
             }
@@ -136,10 +133,14 @@ Variants {
                 }
             }
 
-            Bar {
+            BarWrapper {
                 id: bar
 
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+
                 screen: scope.modelData
+                visibilities: visibilities
                 popouts: panels.popouts
             }
         }

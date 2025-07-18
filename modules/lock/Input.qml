@@ -1,7 +1,7 @@
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
-import "root:/utils"
+import qs.widgets
+import qs.services
+import qs.config
+import qs.utils
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.Pam
@@ -37,12 +37,13 @@ ColumnLayout {
 
                 text: "person"
                 fill: 1
+                grade: 200
                 font.pointSize: Config.lock.sizes.faceSize / 2
             }
 
             CachingImage {
                 anchors.fill: parent
-                path: `${Paths.home}/.face`
+                path: `${Paths.stringify(Paths.home)}/.face`
             }
         }
 
@@ -185,6 +186,7 @@ ColumnLayout {
 
             orientation: Qt.Horizontal
             spacing: Appearance.spacing.small / 2
+            interactive: false
 
             model: ScriptModel {
                 values: root.passwordBuffer.split("")

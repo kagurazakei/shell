@@ -1,7 +1,7 @@
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
-import "root:/modules/bar/popouts" as BarPopouts
+import qs.widgets
+import qs.services
+import qs.config
+import "popouts" as BarPopouts
 import "components"
 import "components/workspaces"
 import Quickshell
@@ -11,6 +11,7 @@ Item {
     id: root
 
     required property ShellScreen screen
+    required property PersistentProperties visibilities
     required property BarPopouts.Wrapper popouts
 
     function checkPopout(y: real): void {
@@ -89,19 +90,19 @@ Item {
             anchors.top: osIcon.bottom
             anchors.topMargin: Appearance.spacing.normal
 
-            radius: 8
+            radius: Appearance.rounding.small
             color: Colours.palette.m3surfaceContainer
 
             implicitWidth: workspacesInner.implicitWidth + Appearance.padding.small * 2
             implicitHeight: workspacesInner.implicitHeight + Appearance.padding.small * 2
 
-            MouseArea {
+            CustomMouseArea {
                 anchors.fill: parent
                 anchors.leftMargin: -Config.border.thickness
                 anchors.rightMargin: -Config.border.thickness
 
-                onWheel: event => {
-                    const activeWs = Hyprland.activeClient?.workspace?.name;
+                function onWheel(event: WheelEvent): void {
+                    const activeWs = Hyprland.activeToplevel?.workspace?.name;
                     if (activeWs?.startsWith("special:"))
                         Hyprland.dispatch(`togglespecialworkspace ${activeWs.slice(8)}`);
                     else if (event.angleDelta.y < 0 || Hyprland.activeWsId > 1)
@@ -151,7 +152,7 @@ Item {
             anchors.bottom: power.top
             anchors.bottomMargin: Appearance.spacing.normal
 
-            radius: 10
+            radius: Appearance.rounding.small
             color: Colours.palette.m3surfaceContainer
 
             implicitHeight: statusIconsInner.implicitHeight + Appearance.padding.normal * 2
@@ -169,6 +170,8 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Appearance.padding.large
+
+            visibilities: root.visibilities
         }
     }
 }

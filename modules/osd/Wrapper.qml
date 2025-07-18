@@ -1,5 +1,5 @@
-import "root:/services"
-import "root:/config"
+import qs.services
+import qs.config
 import Quickshell
 import QtQuick
 
@@ -30,9 +30,9 @@ Item {
             NumberAnimation {
                 target: root
                 property: "implicitWidth"
-                duration: Appearance.anim.durations.expressiveFastSpatial
+                duration: Appearance.anim.durations.normal
                 easing.type: Easing.BezierSpline
-                easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
             }
         },
         Transition {

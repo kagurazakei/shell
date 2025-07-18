@@ -1,8 +1,9 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
+import qs.widgets
+import qs.services
+import qs.config
+import qs.utils
 import Quickshell
 import QtQuick
 
@@ -60,14 +61,14 @@ Column {
         playing: visible
         asynchronous: true
         speed: 0.7
-        source: "root:/assets/kurukuru.gif"
+        source: Paths.expandTilde(Config.paths.sessionGif)
     }
 
     SessionButton {
         id: hibernate
 
         icon: "downloading"
-        command: ["caelestia", "shell", "lock", "lock"]
+        command: ["systemctl", "hibernate"]
 
         KeyNavigation.up: shutdown
         KeyNavigation.down: reboot
@@ -113,6 +114,7 @@ Column {
             text: button.icon
             color: button.activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
             font.pointSize: Appearance.font.size.extraLarge
+            font.weight: 500
         }
     }
 }

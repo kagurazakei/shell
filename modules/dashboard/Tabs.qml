@@ -1,6 +1,9 @@
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
+pragma ComponentBehavior: Bound
+
+import qs.widgets
+import qs.services
+import qs.config
+import Quickshell
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Controls
@@ -9,8 +12,8 @@ Item {
     id: root
 
     required property real nonAnimWidth
-    property alias currentIndex: bar.currentIndex
-    readonly property TabBar bar: bar
+    required property PersistentProperties state
+    readonly property alias count: bar.count
 
     implicitHeight: bar.implicitHeight + indicator.implicitHeight + indicator.anchors.topMargin + separator.implicitHeight
 
@@ -21,6 +24,7 @@ Item {
         anchors.right: parent.right
         anchors.top: parent.top
 
+        currentIndex: root.state.currentTab
         background: null
 
         Tab {
@@ -99,7 +103,7 @@ Item {
 
         background: null
 
-        contentItem: MouseArea {
+        contentItem: CustomMouseArea {
             id: mouse
 
             implicitWidth: Math.max(icon.width, label.width)
@@ -108,23 +112,23 @@ Item {
             cursorShape: Qt.PointingHandCursor
 
             onPressed: event => {
-                tab.TabBar.tabBar.setCurrentIndex(tab.TabBar.index);
+                root.state.currentTab = tab.TabBar.index;
 
                 const stateY = stateWrapper.y;
                 rippleAnim.x = event.x;
                 rippleAnim.y = event.y - stateY;
 
                 const dist = (ox, oy) => ox * ox + oy * oy;
-                const stateEndY = stateY + stateWrapper.height;
-                rippleAnim.radius = Math.sqrt(Math.max(dist(0, stateY), dist(0, stateEndY), dist(width, stateY), dist(width, stateEndY)));
+                rippleAnim.radius = Math.sqrt(Math.max(dist(event.x, event.y + stateY), dist(event.x, stateWrapper.height - event.y), dist(width - event.x, event.y + stateY), dist(width - event.x, stateWrapper.height - event.y)));
 
                 rippleAnim.restart();
             }
-            onWheel: event => {
+
+            function onWheel(event: WheelEvent): void {
                 if (event.angleDelta.y < 0)
-                    tab.TabBar.tabBar.incrementCurrentIndex();
+                    root.state.currentTab = Math.min(root.state.currentTab + 1, bar.count - 1);
                 else if (event.angleDelta.y > 0)
-                    tab.TabBar.tabBar.decrementCurrentIndex();
+                    root.state.currentTab = Math.max(root.state.currentTab - 1, 0);
             }
 
             SequentialAnimation {
@@ -147,25 +151,23 @@ Item {
                 PropertyAction {
                     target: ripple
                     property: "opacity"
-                    value: 0.1
+                    value: 0.08
                 }
-                ParallelAnimation {
-                    Anim {
-                        target: ripple
-                        properties: "implicitWidth,implicitHeight"
-                        from: 0
-                        to: rippleAnim.radius * 2
-                        duration: Appearance.anim.durations.large
-                        easing.bezierCurve: Appearance.anim.curves.standardDecel
-                    }
-                    Anim {
-                        target: ripple
-                        property: "opacity"
-                        to: 0
-                        duration: Appearance.anim.durations.large
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve: Appearance.anim.curves.standardDecel
-                    }
+                Anim {
+                    target: ripple
+                    properties: "implicitWidth,implicitHeight"
+                    from: 0
+                    to: rippleAnim.radius * 2
+                    duration: Appearance.anim.durations.normal
+                    easing.bezierCurve: Appearance.anim.curves.standardDecel
+                }
+                Anim {
+                    target: ripple
+                    property: "opacity"
+                    to: 0
+                    duration: Appearance.anim.durations.normal
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: Appearance.anim.curves.standard
                 }
             }
 

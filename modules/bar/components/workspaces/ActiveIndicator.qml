@@ -1,6 +1,6 @@
-import "root:/widgets"
-import "root:/services"
-import "root:/config"
+import qs.widgets
+import qs.services
+import qs.config
 import QtQuick
 import QtQuick.Effects
 
@@ -43,9 +43,9 @@ StyledRect {
     clip: true
     x: 1
     y: offset + 1
-    implicitWidth: Config.bar.sizes.innerHeight - 4
+    implicitWidth: Config.bar.sizes.innerHeight - 2
     implicitHeight: size - 2
-    radius: 8
+    radius: 5
     color: Colours.palette.m3primary
 
     StyledRect {
