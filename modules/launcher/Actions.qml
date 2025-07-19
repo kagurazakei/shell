@@ -119,7 +119,7 @@ Singleton {
 
             function onClicked(list: AppList): void {
                 list.visibilities.launcher = false;
-                Quickshell.execDetached(["loginctl", "lock-session"]);
+                Quickshell.execDetached(["hyprctl","dispatch", "global", "caelestia:lock"]);
             }
         },
         Action {
