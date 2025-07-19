@@ -80,21 +80,21 @@ Singleton {
         readonly property real layers: 0.58
     }
 
-    
+
 component Colours: QtObject {
     // Material 3 Colors (blended from Rxyhn + Decay Dark)
-    property color m3primary_paletteKeyColor: "#a189ea"
-    property color m3secondary_paletteKeyColor: "#7f7b99"
-    property color m3tertiary_paletteKeyColor: "#c475b8"
-    property color m3neutral_paletteKeyColor: "#5e5c6c"
-    property color m3neutral_variant_paletteKeyColor: "#575664"
+    property color m3primary_paletteKeyColor: "#bd93f9"
+    property color m3secondary_paletteKeyColor: "#50f17b"
+    property color m3tertiary_paletteKeyColor: "#ff79c6"
+    property color m3neutral_paletteKeyColor: "#1e1e2e"
+    property color m3neutral_variant_paletteKeyColor: "#d7d7db"
 
     // Surface/Background (dark)
     property color m3background: "#0e1013"
     property color m3onBackground: "#d7d7db"
     property color m3surface: "#0e1013"
     property color m3surfaceDim: "#090a0e"
-    property color m3surfaceBright: "#1c1e24"
+    property color m3surfaceBright: "#1e1e2e"
     property color m3surfaceContainerLowest: "#040507"
     property color m3surfaceContainerLow: "#111318"
     property color m3surfaceContainer: "#16181d"
@@ -155,17 +155,17 @@ component Colours: QtObject {
     // Accent Names (reused for compatibility)
     property color rosewater: "#d2bcff"
     property color flamingo: "#db98e0"
-    property color pink: "#ce69b2"
-    property color mauve: "#a189ea"
+    property color pink: "#ff79c6"
+    property color mauve: "#bd93f9"
     property color red: "#e05b66"
-    property color maroon: "#c2707a"
+    property color maroon: "#ff5555"
     property color peach: "#df9098"
     property color yellow: "#e5be5d"
-    property color green: "#a3be8c"
-    property color teal: "#8ec07c"
-    property color sky: "#81a2f8"
-    property color sapphire: "#5974cc"
+    property color green: "#50fa7b"
+    property color teal: "#5af78e"
+    property color sky: "#33b1ff"
+    property color sapphire: "#78a9ff"
     property color blue: "#5d84d6"
-    property color lavender: "#b1bfff"
+    property color lavender: "#50fa7b"
 }
 }

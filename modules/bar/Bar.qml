@@ -62,7 +62,7 @@ Item {
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
-    anchors.left: parent.left
+    anchors.left: parent.top
 
     implicitWidth: child.implicitWidth + Config.border.thickness * 2
 
