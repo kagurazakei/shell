@@ -117,7 +117,7 @@ Searcher {
 
             function onClicked(list: AppList): void {
                 list.visibilities.launcher = false;
-                Quickshell.execDetached(["hyprctl", "dispatch", "global", "caelestia:lock"]);
+                Quickshell.execDetached(["loginctl", "lock-session"]);
             }
         },
         Action {
